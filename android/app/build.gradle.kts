@@ -37,6 +37,10 @@ kotlin {
     }
 }
 
+dependencies {
+    compileOnly(project(":framework-stubs"))
+}
+
 flutter {
     source = "../.."
 }

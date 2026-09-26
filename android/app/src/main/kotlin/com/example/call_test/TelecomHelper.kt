@@ -163,11 +163,11 @@ object TelecomHelper {
 
         val callEventCallback = object : CallEventCallback {
             override fun onCallEndpointChanged(newCallEndpoint: CallEndpoint) {
-                CallStreamingServiceControl.log(TAG, "CallEndpoint changed: ${newCallEndpoint.name} (${newCallEndpoint.endpointType})")
+                CallStreamingServiceControl.log(TAG, "CallEndpoint changed: ${newCallEndpoint.endpointName} (${newCallEndpoint.endpointType})")
             }
 
             override fun onAvailableCallEndpointsChanged(availableEndpoints: List<CallEndpoint>) {
-                CallStreamingServiceControl.log(TAG, "Available CallEndpoints: ${availableEndpoints.map { it.name }}")
+                CallStreamingServiceControl.log(TAG, "Available CallEndpoints: ${availableEndpoints.map { it.endpointName.toString() }}")
             }
 
             override fun onMuteStateChanged(isMuted: Boolean) {

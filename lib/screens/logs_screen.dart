@@ -17,11 +17,13 @@ class _LogsScreenState extends State<LogsScreen> {
 
   String _filterLevel = 'ALL';
   bool _autoScroll = true;
+  String _logFilePath = 'Loading log file path...';
 
   @override
   void initState() {
     super.initState();
     _loadInitialLogs();
+    _loadLogFilePath();
 
     _telecomService.logStream.listen((entry) {
       if (mounted) {
@@ -37,6 +39,22 @@ class _LogsScreenState extends State<LogsScreen> {
         }
       }
     });
+  }
+
+  Future<void> _loadLogFilePath() async {
+    final path = await _telecomService.getLogFilePath();
+    if (mounted) {
+      setState(() => _logFilePath = path);
+    }
+  }
+
+  Future<void> _exportLogFile() async {
+    final path = await _telecomService.exportLogsToFile();
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Logs captured to file:\n$path')),
+      );
+    }
   }
 
   @override
@@ -92,6 +110,44 @@ class _LogsScreenState extends State<LogsScreen> {
 
     return Column(
       children: [
+        // Persistent Log File Status Bar
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+          color: Colors.blueGrey.shade900,
+          child: Row(
+            children: [
+              const Icon(Icons.description, color: Colors.greenAccent, size: 16),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  'Log File: $_logFilePath',
+                  style: const TextStyle(color: Colors.white70, fontSize: 11, fontFamily: 'monospace'),
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+              IconButton(
+                icon: const Icon(Icons.copy, size: 16, color: Colors.greenAccent),
+                tooltip: 'Copy File Path',
+                padding: EdgeInsets.zero,
+                constraints: const BoxConstraints(),
+                onPressed: () {
+                  Clipboard.setData(ClipboardData(text: _logFilePath));
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Log file path copied')),
+                  );
+                },
+              ),
+              const SizedBox(width: 8),
+              IconButton(
+                icon: const Icon(Icons.save, size: 16, color: Colors.cyanAccent),
+                tooltip: 'Flush Logs to File',
+                padding: EdgeInsets.zero,
+                constraints: const BoxConstraints(),
+                onPressed: _exportLogFile,
+              ),
+            ],
+          ),
+        ),
         // Controls Toolbar
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),

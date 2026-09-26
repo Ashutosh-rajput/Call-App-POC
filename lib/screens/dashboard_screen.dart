@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import '../models/system_status.dart';
 import '../services/telecom_service.dart';
 
@@ -345,7 +344,7 @@ SECONDARY PHONE
           decoration: BoxDecoration(
             color: color.withOpacity(0.12),
             borderRadius: BorderRadius.circular(8),
-            border: Border.BorderSide(color: color.withOpacity(0.4)),
+            border: Border.all(color: color.withOpacity(0.4)),
           ),
           child: Text(
             badgeText,

@@ -124,7 +124,6 @@ class _PocPhasesScreenState extends State<PocPhasesScreen> {
   @override
   Widget build(BuildContext context) {
     final s = widget.status;
-    final theme = Theme.of(context);
 
     return ListView(
       padding: const EdgeInsets.all(16),

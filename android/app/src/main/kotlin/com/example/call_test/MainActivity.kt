@@ -28,6 +28,8 @@ class MainActivity : FlutterActivity(), MethodChannel.MethodCallHandler, EventCh
     override fun configureFlutterEngine(@NonNull flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
 
+        CallStreamingServiceControl.initLogFile(this)
+
         MethodChannel(flutterEngine.dartExecutor.binaryMessenger, METHOD_CHANNEL)
             .setMethodCallHandler(this)
 
@@ -196,6 +198,13 @@ class MainActivity : FlutterActivity(), MethodChannel.MethodCallHandler, EventCh
             "clearLogs" -> {
                 CallStreamingServiceControl.clearLogs()
                 result.success(mapOf("cleared" to true))
+            }
+            "getLogFilePath" -> {
+                result.success(mapOf("path" to CallStreamingServiceControl.getLogFilePath()))
+            }
+            "exportLogsToFile" -> {
+                val path = CallStreamingServiceControl.exportLogsToFile()
+                result.success(mapOf("success" to true, "path" to path))
             }
             else -> result.notImplemented()
         }

@@ -181,4 +181,22 @@ class TelecomService {
   Future<void> clearLogs() async {
     await _channel.invokeMethod('clearLogs');
   }
+
+  Future<String> getLogFilePath() async {
+    try {
+      final res = await _channel.invokeMethod<Map<dynamic, dynamic>>('getLogFilePath');
+      return res?['path']?.toString() ?? 'Unavailable';
+    } catch (e) {
+      return 'Error: $e';
+    }
+  }
+
+  Future<String> exportLogsToFile() async {
+    try {
+      final res = await _channel.invokeMethod<Map<dynamic, dynamic>>('exportLogsToFile');
+      return res?['path']?.toString() ?? 'Failed to export';
+    } catch (e) {
+      return 'Error: $e';
+    }
+  }
 }

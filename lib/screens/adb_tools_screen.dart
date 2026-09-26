@@ -11,7 +11,6 @@ class AdbToolsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final pkg = 'com.example.call_test';
     final role = 'android.app.role.SYSTEM_CALL_STREAMING';
-    final theme = Theme.of(context);
 
     final commands = [
       {

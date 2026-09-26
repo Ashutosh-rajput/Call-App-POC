@@ -58,6 +58,39 @@ object CallStreamingServiceControl {
         }
     }
 
+    private var logFile: java.io.File? = null
+    private var logWriter: java.io.PrintWriter? = null
+
+    fun initLogFile(context: android.content.Context) {
+        try {
+            val baseDir = context.getExternalFilesDir(null) ?: context.filesDir
+            val logsDir = java.io.File(baseDir, "logs")
+            if (!logsDir.exists()) logsDir.mkdirs()
+            val file = java.io.File(logsDir, "call_streaming_debug.log")
+            logFile = file
+            logWriter = java.io.PrintWriter(java.io.FileWriter(file, true))
+            log(TAG, "Log file initialized at: ${file.absolutePath}")
+        } catch (e: Exception) {
+            Log.e(TAG, "Failed to init log file: ${e.message}")
+        }
+    }
+
+    fun getLogFilePath(): String {
+        return logFile?.absolutePath ?: "Unavailable"
+    }
+
+    fun exportLogsToFile(): String {
+        val file = logFile ?: return "Log file not initialized"
+        return try {
+            synchronized(recentLogs) {
+                logWriter?.flush()
+            }
+            file.absolutePath
+        } catch (e: Exception) {
+            "Export error: ${e.message}"
+        }
+    }
+
     fun log(tag: String, message: String, level: String = "INFO") {
         val timeStr = SimpleDateFormat("HH:mm:ss.SSS", Locale.US).format(Date())
         val entry = mapOf(
@@ -70,6 +103,12 @@ object CallStreamingServiceControl {
             recentLogs.add(entry)
             if (recentLogs.size > maxLogs) {
                 recentLogs.removeAt(0)
+            }
+            try {
+                logWriter?.println("[$timeStr] [$level] [$tag] $message")
+                logWriter?.flush()
+            } catch (e: Exception) {
+                // Ignore write error
             }
         }
         when (level) {
@@ -91,6 +130,15 @@ object CallStreamingServiceControl {
     fun clearLogs() {
         synchronized(recentLogs) {
             recentLogs.clear()
+            try {
+                logWriter?.close()
+                logFile?.writeText("")
+                if (logFile != null) {
+                    logWriter = java.io.PrintWriter(java.io.FileWriter(logFile, true))
+                }
+            } catch (e: Exception) {
+                // Ignore
+            }
         }
     }
 

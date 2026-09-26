@@ -38,15 +38,23 @@ object TelecomHelper {
     fun isPhoneAccountRegistered(context: Context): Boolean {
         val telecomManager = context.getSystemService(Context.TELECOM_SERVICE) as? TelecomManager ?: return false
         val handle = getPhoneAccountHandle(context)
-        val account = telecomManager.getPhoneAccount(handle)
-        return account != null
+        return try {
+            val account = telecomManager.getPhoneAccount(handle)
+            account != null
+        } catch (e: Exception) {
+            false
+        }
     }
 
     fun isPhoneAccountEnabled(context: Context): Boolean {
         val telecomManager = context.getSystemService(Context.TELECOM_SERVICE) as? TelecomManager ?: return false
         val handle = getPhoneAccountHandle(context)
-        val account = telecomManager.getPhoneAccount(handle)
-        return account?.isEnabled == true
+        return try {
+            val account = telecomManager.getPhoneAccount(handle)
+            account?.isEnabled == true
+        } catch (e: Exception) {
+            false
+        }
     }
 
     fun registerPhoneAccount(context: Context): Boolean {
@@ -56,7 +64,6 @@ object TelecomHelper {
             val builder = PhoneAccount.builder(handle, "CTS Call Streaming Account")
                 .setCapabilities(
                     PhoneAccount.CAPABILITY_SELF_MANAGED or
-                    PhoneAccount.CAPABILITY_CALL_PROVIDER or
                     PhoneAccount.CAPABILITY_SUPPORTS_VIDEO_CALLING
                 )
                 .setShortDescription("PoC Call Streaming Account")

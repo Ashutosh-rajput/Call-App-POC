@@ -223,7 +223,9 @@ class _PocPhasesScreenState extends State<PocPhasesScreen> {
               const SizedBox(height: 8),
               _buildCodeSnippet(s?.adbCommands['addRole'] ?? 'adb shell cmd role add-role-holder --bypass-role-qualification android.app.role.SYSTEM_CALL_STREAMING com.example.call_test'),
               const SizedBox(height: 8),
-              Row(
+              Wrap(
+                spacing: 8,
+                runSpacing: 8,
                 children: [
                   OutlinedButton.icon(
                     icon: const Icon(Icons.copy, size: 16),
@@ -236,7 +238,6 @@ class _PocPhasesScreenState extends State<PocPhasesScreen> {
                       );
                     },
                   ),
-                  const SizedBox(width: 8),
                   ElevatedButton(
                     onPressed: widget.onRefresh,
                     child: const Text('Verify Status'),
@@ -340,19 +341,22 @@ class _PocPhasesScreenState extends State<PocPhasesScreen> {
                 children: [
                   const Text('Source:', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
                   const SizedBox(width: 10),
-                  DropdownButton<int>(
-                    value: _selectedAudioSource,
-                    isDense: true,
-                    items: const [
-                      DropdownMenuItem(value: 7, child: Text('VOICE_COMMUNICATION (7)')),
-                      DropdownMenuItem(value: 1, child: Text('MIC (1)')),
-                      DropdownMenuItem(value: 4, child: Text('VOICE_CALL (4 - GSM) ')),
-                      DropdownMenuItem(value: 3, child: Text('VOICE_DOWNLINK (3 - Rx)')),
-                      DropdownMenuItem(value: 2, child: Text('VOICE_UPLINK (2 - Tx)')),
-                    ],
-                    onChanged: _isLiveCapturing ? null : (val) {
-                      if (val != null) setState(() => _selectedAudioSource = val);
-                    },
+                  Expanded(
+                    child: DropdownButton<int>(
+                      isExpanded: true,
+                      value: _selectedAudioSource,
+                      isDense: true,
+                      items: const [
+                        DropdownMenuItem(value: 7, child: Text('VOICE_COMMUNICATION (7)')),
+                        DropdownMenuItem(value: 1, child: Text('MIC (1)')),
+                        DropdownMenuItem(value: 4, child: Text('VOICE_CALL (4 - GSM)')),
+                        DropdownMenuItem(value: 3, child: Text('VOICE_DOWNLINK (3 - Rx)')),
+                        DropdownMenuItem(value: 2, child: Text('VOICE_UPLINK (2 - Tx)')),
+                      ],
+                      onChanged: _isLiveCapturing ? null : (val) {
+                        if (val != null) setState(() => _selectedAudioSource = val);
+                      },
+                    ),
                   ),
                 ],
               ),
@@ -367,15 +371,17 @@ class _PocPhasesScreenState extends State<PocPhasesScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    Wrap(
+                      spacing: 12,
+                      runSpacing: 4,
+                      alignment: WrapAlignment.spaceBetween,
                       children: [
                         Text(
                           'RMS Level: ${_currentRmsDb.toStringAsFixed(1)} dB',
                           style: const TextStyle(color: Colors.greenAccent, fontFamily: 'monospace', fontSize: 12),
                         ),
                         Text(
-                          'Peak Amp: $_currentMaxAmp | Frames: $_capturedFrames',
+                          'Peak: $_currentMaxAmp | Frames: $_capturedFrames',
                           style: const TextStyle(color: Colors.white70, fontFamily: 'monospace', fontSize: 11),
                         ),
                       ],
